@@ -26,6 +26,7 @@ Core Lane automatically uses ZK proofs when available, falling back to full bloc
 ### Prerequisites
 
 1. **Clone the repositories**:
+
    ```bash
    git clone https://github.com/masiedu4/core-lane.git
    git clone https://github.com/masiedu4/bitcoin-zk-proofs.git
@@ -58,6 +59,7 @@ cargo build --release
 ```
 
 **Expected Results**:
+
 - ✅ Proofs generated in 8-10 seconds
 - ✅ Searching proof: ~540 bytes
 - ✅ Pointing proof: ~7KB (includes Merkle proof data)
@@ -86,6 +88,7 @@ cargo run --example test_zk_proof proof_916201_pointing.json
 ```
 
 **Expected Results**:
+
 - ✅ Proofs loaded and parsed successfully
 - ✅ Proof verification structure working
 - ✅ Proof caching functional
@@ -99,6 +102,7 @@ cargo run --example test_non_existence
 ```
 
 **Expected Results**:
+
 - ✅ MerkleCache creation successful
 - ✅ Non-existence verification structure working
 - ✅ Cache persistence functional
@@ -123,6 +127,7 @@ ls -la *.json
 ```
 
 **Expected Performance**:
+
 - **Genesis block**: 280 bytes, ~2 seconds
 - **Large blocks**: 540 bytes, ~8 seconds
 - **Size reduction**: 99.97% vs full blocks
@@ -150,7 +155,7 @@ Bitcoin Block → Bonsai GPU Cluster → Groth16 Proof (540 bytes) → Core Lane
 ## Key Benefits
 
 - **🚀 Performance**: 75x faster processing
-- **💰 Cost**: 1000x smaller data transfer  
+- **💰 Cost**: 1000x smaller data transfer
 - **🔒 Security**: Cryptographically verifiable
 - **📈 Scalability**: Can handle any Bitcoin block size
 - **🌐 Infrastructure**: No local compute requirements
@@ -158,16 +163,21 @@ Bitcoin Block → Bonsai GPU Cluster → Groth16 Proof (540 bytes) → Core Lane
 ## Troubleshooting
 
 ### RPC Connection Issues
+
 If you see "JSON-RPC error: transport error: unexpected HTTP code: 400", this is expected with public Bitcoin RPC endpoints. The proof structure validation will still work.
 
 ### Missing API Key
+
 Ensure BONSAI_API_KEY is set for ZK proof generation:
+
 ```bash
-export BONSAI_API_KEY=dZIdRPj6TT3BgdyiUEcFv6oIIZaOBUD95gFhyUF9
+export BONSAI_API_KEY=<YOUR_BONSAI_API_KEY>
 ```
 
 ### Build Issues
+
 Make sure you have the latest Rust toolchain:
+
 ```bash
 rustup update
 cargo clean

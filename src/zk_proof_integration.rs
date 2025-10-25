@@ -82,52 +82,54 @@ fn build_block_from_proof(
         parent_hash_bytes,
     );
 
-            // Process each matching transaction from the proof
-            for matching_tx in proof.matching_transactions {
-                // Find the transaction in the block
-                let tx = block
-                    .txdata
-                    .iter()
-                    .find(|tx| tx.compute_txid().to_string() == matching_tx.txid);
+    // Process each matching transaction from the proof
+    for matching_tx in proof.matching_transactions {
+        // Find the transaction in the block
+        let tx = block
+            .txdata
+            .iter()
+            .find(|tx| tx.compute_txid().to_string() == matching_tx.txid);
 
-                if let Some(tx) = tx {
-                    // Process based on transaction type
-                    match matching_tx.tx_type {
-                        TransactionType::Burn => {
-                            debug!("   Processing burn transaction: {}", matching_tx.txid);
-                            if let Some((payload, burn_value)) = extract_burn_from_tx(tx) {
-                                if let Ok(burn) =
-                                    process_burn_transaction(payload, burn_value, matching_tx.txid.clone())
-                                {
-                                    parsed_block.add_burn(burn);
-                                }
-                            }
-                        }
-                        TransactionType::DataAvailability => {
-                            debug!("   Processing DA transaction: {}", matching_tx.txid);
-                            if let Some(lane_tx) = extract_da_from_tx(tx) {
-                                if let Some((tx_env, sender)) = crate::block::decode_tx_envelope(&lane_tx) {
-                                    parsed_block.add_bundle_from_single_tx(tx_env, sender, lane_tx);
-                                }
-                            }
-                        }
-                        TransactionType::Fill => {
-                            debug!("   Processing fill transaction: {}", matching_tx.txid);
-                            if let Some(fill_data) = extract_fill_from_tx(tx) {
-                                if let Ok(_fill) = process_fill_transaction(fill_data, matching_tx.txid.clone()) {
-                                    // TODO: Add fill to parsed_block when CoreLaneBlockParsed supports it
-                                    debug!("   Fill transaction processed: {}", matching_tx.txid);
-                                }
-                            }
+        if let Some(tx) = tx {
+            // Process based on transaction type
+            match matching_tx.tx_type {
+                TransactionType::Burn => {
+                    debug!("   Processing burn transaction: {}", matching_tx.txid);
+                    if let Some((payload, burn_value)) = extract_burn_from_tx(tx) {
+                        if let Ok(burn) =
+                            process_burn_transaction(payload, burn_value, matching_tx.txid.clone())
+                        {
+                            parsed_block.add_burn(burn);
                         }
                     }
-                } else {
-                    warn!(
-                        "⚠️  Transaction {} not found in block (this shouldn't happen after verification)",
-                        matching_tx.txid
-                    );
+                }
+                TransactionType::DataAvailability => {
+                    debug!("   Processing DA transaction: {}", matching_tx.txid);
+                    if let Some(lane_tx) = extract_da_from_tx(tx) {
+                        if let Some((tx_env, sender)) = crate::block::decode_tx_envelope(&lane_tx) {
+                            parsed_block.add_bundle_from_single_tx(tx_env, sender, lane_tx);
+                        }
+                    }
+                }
+                TransactionType::Fill => {
+                    debug!("   Processing fill transaction: {}", matching_tx.txid);
+                    if let Some(fill_data) = extract_fill_from_tx(tx) {
+                        if let Ok(_fill) =
+                            process_fill_transaction(fill_data, matching_tx.txid.clone())
+                        {
+                            // TODO: Add fill to parsed_block when CoreLaneBlockParsed supports it
+                            debug!("   Fill transaction processed: {}", matching_tx.txid);
+                        }
+                    }
                 }
             }
+        } else {
+            warn!(
+                "⚠️  Transaction {} not found in block (this shouldn't happen after verification)",
+                matching_tx.txid
+            );
+        }
+    }
 
     info!(
         "✅ Built block from ZK proof: {} burns, {} bundles",
@@ -348,15 +350,21 @@ pub fn verify_tx_non_existence(
     txid: &str,
     proof_verifier: &mut ProofVerifier,
 ) -> Result<bool> {
-    info!("🔍 Verifying non-existence of transaction {} in block {}", txid, block_height);
-    
+    info!(
+        "🔍 Verifying non-existence of transaction {} in block {}",
+        txid, block_height
+    );
+
     let non_existent = proof_verifier.verify_tx_non_existence(block_height, txid)?;
-    
+
     if non_existent {
-        info!("✅ Confirmed: transaction {} does not exist in block {}", txid, block_height);
+        info!(
+            "✅ Confirmed: transaction {} does not exist in block {}",
+            txid, block_height
+        );
     } else {
         info!("❌ Transaction {} exists in block {}", txid, block_height);
     }
-    
+
     Ok(non_existent)
 }
