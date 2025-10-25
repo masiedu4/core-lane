@@ -29,9 +29,13 @@ pub mod bitcoin_cache_rpc;
 pub mod block;
 pub mod cmio;
 pub mod intents;
+pub mod merkle_cache;
 pub mod state;
 pub mod taproot_da;
 pub mod transaction;
+pub mod zk_proof_integration;
+pub mod zk_proof_storage;
+pub mod zk_proof_verifier;
 
 // RPC module is not included in the library - it's only used by the binary
 // and depends on types defined in main.rs
