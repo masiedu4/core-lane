@@ -4,16 +4,27 @@ Bitcoin-anchored execution environment that processes Bitcoin burns and Core Lan
 
 ## Features
 
-- **Bitcoin Integration**: Connects to Bitcoin RPC for block processing
-- **ZK Proof Support**: Uses zero-knowledge proofs for efficient block verification
+- **Bitcoin Integration**: Supports Bitcoin RPC for block processing
+- **ZK Proof Support**: Supports zero-knowledge proofs for efficient block verification
 - **Merkle Proof Verification**: Supports both searching and pointing proof strategies
-- **Non-Existence Verification**: Local Merkle tree caching for transaction verification
-- **Intent Processing**: Handles burns, DA transactions, and fill transactions
-- **Ethereum Compatibility**: Provides JSON-RPC at port 8545
+- **Non-Existence Verification**: Supports local Merkle tree caching for transaction verification
+- **Intent Processing**: Supports burns, DA transactions, and fill transactions
+- **Ethereum Compatibility**: Supports JSON-RPC at port 8545
 
 ## ZK Proof Integration
 
-Core Lane automatically uses ZK proofs when available, falling back to full block processing when not.
+Core Lane supports ZK proofs for efficient block verification. The ZK proof system can be used to verify Bitcoin blocks and extract Core Lane transactions with significant performance improvements.
+
+### Current Status
+
+- ✅ **ZK Proof Generation**: Complete and tested
+- ✅ **ZK Proof Verification**: Complete and tested
+- ✅ **Merkle Proof Support**: Complete and tested
+- ✅ **Non-Existence Verification**: Complete and tested
+- ⚠️ **Main Loop Integration**: In development (95% complete)
+- ❌ **Boundless Integration**: Not implemented
+
+The ZK proof system is fully functional and can be used via the provided examples. Integration into Core Lane's main block processing loop and Boundless integration are pending.
 
 ### Proof Strategies
 
@@ -131,19 +142,12 @@ ls -la *.json
 
 ### Step 5: Integration Testing
 
-```bash
+````bash
 cd ../core-lane
 
 # Test end-to-end workflow
 cargo run --example test_zk_proof ../bitcoin-zk-proofs/test_searching.json
 cargo run --example test_zk_proof ../bitcoin-zk-proofs/test_pointing.json
-
-# Verify proof caching
-ls -la /tmp/core_lane_test_proofs/
-```
-
-
-
 
 
 ## Troubleshooting
@@ -158,7 +162,7 @@ Ensure all dependencies are installed:
 
 ```bash
 cargo build --release
-```
+````
 
 ### Build Issues
 
