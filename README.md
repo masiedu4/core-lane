@@ -32,19 +32,16 @@ Core Lane automatically uses ZK proofs when available, falling back to full bloc
    git clone https://github.com/masiedu4/bitcoin-zk-proofs.git
    ```
 
-2. **Set up Bonsai API** (for ZK proof generation):
+2. **Build the projects**:
    ```bash
-   export BONSAI_API_KEY=dZIdRPj6TT3BgdyiUEcFv6oIIZaOBUD95gFhyUF9
-   export BONSAI_API_URL=https://api.bonsai.xyz
+   cd bitcoin-zk-proofs && cargo build --release
+   cd ../core-lane && cargo build
    ```
 
 ### Step 1: Test ZK Proof Generation
 
 ```bash
 cd bitcoin-zk-proofs
-
-# Build the project
-cargo build --release
 
 # Test searching strategy (finds all Core Lane transactions)
 ./target/release/host prove --height 916201 --output test_searching.json --strategy searching
@@ -73,8 +70,7 @@ cd ../core-lane
 # Checkout the ZK proof integration branch
 git checkout feature/zk-proof-integration
 
-# Build the project
-cargo build
+# Project already built in prerequisites
 
 # Copy generated proofs for testing
 cp ../bitcoin-zk-proofs/test_searching.json proof_916201.json
@@ -146,19 +142,9 @@ cargo run --example test_zk_proof ../bitcoin-zk-proofs/test_pointing.json
 ls -la /tmp/core_lane_test_proofs/
 ```
 
-## Architecture
 
-```
-Bitcoin Block → Bonsai GPU Cluster → Groth16 Proof (540 bytes) → Core Lane Verification → State Update
-```
 
-## Key Benefits
 
-- **🚀 Performance**: 75x faster processing
-- **💰 Cost**: 1000x smaller data transfer
-- **🔒 Security**: Cryptographically verifiable
-- **📈 Scalability**: Can handle any Bitcoin block size
-- **🌐 Infrastructure**: No local compute requirements
 
 ## Troubleshooting
 
@@ -166,12 +152,12 @@ Bitcoin Block → Bonsai GPU Cluster → Groth16 Proof (540 bytes) → Core Lane
 
 If you see "JSON-RPC error: transport error: unexpected HTTP code: 400", this is expected with public Bitcoin RPC endpoints. The proof structure validation will still work.
 
-### Missing API Key
+### Missing Dependencies
 
-Ensure BONSAI_API_KEY is set for ZK proof generation:
+Ensure all dependencies are installed:
 
 ```bash
-export BONSAI_API_KEY=<YOUR_BONSAI_API_KEY>
+cargo build --release
 ```
 
 ### Build Issues
